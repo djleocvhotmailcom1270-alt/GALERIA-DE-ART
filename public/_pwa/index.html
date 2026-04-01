@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Galeria de Art</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/_pwa/style.css">
+    <link rel="manifest" href="/_pwa/manifest.json">
+    <meta name="theme-color" content="#d4af37">
+    <link rel="apple-touch-icon" href="/_pwa/icon-192.png">
+</head>
+<body>
+    <div id="pwa-install-overlay" class="overlay">
+        <div class="glass-card">
+            <h1>Bem-vindo à Galeria de Art</h1>
+            <p>Para a melhor experiência, instale nosso web app em seu celular.</p>
+            <div class="actions">
+                <button id="install-button" class="btn-primary">Instalar App</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="content-iframe-container" class="hidden">
+        <iframe id="mirror-iframe" src="/?mirror=true" frameborder="0"></iframe>
+    </div>
+
+    <script>
+        let deferredPrompt;
+        const overlay = document.getElementById('pwa-install-overlay');
+        const contentContainer = document.getElementById('content-iframe-container');
+        const installBtn = document.getElementById('install-button');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            overlay.classList.remove('hidden');
+        });
+
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    console.log('User accepted the install prompt');
+                }
+                deferredPrompt = null;
+                showContent();
+            }
+        });
+
+
+
+        function showContent() {
+            overlay.classList.add('fade-out');
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                contentContainer.classList.remove('hidden');
+                contentContainer.classList.add('fade-in');
+            }, 500);
+        }
+
+        // Check if already installed
+        window.addEventListener('appinstalled', () => {
+            showContent();
+        });
+
+        if (window.matchMedia('(display-mode: standalone)').matches) {
+            showContent();
+        }
+
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/_pwa/sw.js', { scope: '/_pwa/' })
+                .then(reg => console.log('SW Registered', reg))
+                .catch(err => console.log('SW Error', err));
+        }
+    </script>
+</body>
+</html>

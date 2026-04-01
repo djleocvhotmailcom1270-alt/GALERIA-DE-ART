@@ -1,0 +1,21 @@
+{
+    "name": "Galeria de Art",
+    "short_name": "Galeria",
+    "description": "Servidor Espelho PWA",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#1a1a1a",
+    "theme_color": "#1a1a1a",
+    "icons": [
+        {
+            "src": "/_pwa/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/_pwa/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}
